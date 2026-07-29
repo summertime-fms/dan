@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useId, useRef, useState } from "react";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { contact, site } from "@/content/copy";
@@ -10,6 +10,8 @@ type Status = "idle" | "loading" | "ok" | "error";
 export function Contact() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+  const [task, setTask] = useState("");
+  const [message, setMessage] = useState("");
   const calHref = site.calUrl || undefined;
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -22,8 +24,15 @@ export function Contact() {
     const payload = {
       name: String(data.get("name") || ""),
       contact: String(data.get("contact") || ""),
-      task: String(data.get("task") || ""),
+      task,
+      message: message.trim(),
     };
+
+    if (!payload.task) {
+      setStatus("error");
+      setError("Выберите задачу");
+      return;
+    }
 
     try {
       const res = await fetch("/api/contact", {
@@ -37,6 +46,8 @@ export function Contact() {
       }
       setStatus("ok");
       form.reset();
+      setTask("");
+      setMessage("");
     } catch (err) {
       setStatus("error");
       setError(err instanceof Error ? err.message : "Ошибка отправки");
@@ -101,25 +112,26 @@ export function Contact() {
                 required
                 autoComplete="tel"
               />
+
+              <TaskPicker
+                value={task}
+                onChange={setTask}
+                options={contact.taskOptions}
+              />
+
               <label className="flex flex-col gap-1.5">
                 <span className="text-xs text-muted">
-                  Опишите кратко задачу или выберите из списка
+                  Есть ещё что рассказать?{" "}
+                  <span className="text-muted/70">(необязательно)</span>
                 </span>
-                <select
-                  name="task"
-                  required
-                  defaultValue=""
-                  className="rounded-[10px] border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/40"
-                >
-                  <option value="" disabled>
-                    Выберите задачу
-                  </option>
-                  {contact.taskOptions.map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
+                <textarea
+                  name="message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  rows={3}
+                  placeholder="Контекст, сроки, что уже пробовали…"
+                  className="resize-y rounded-[10px] border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted/50 focus:border-accent/50 focus:ring-1 focus:ring-accent/40"
+                />
               </label>
 
               <div className="flex flex-wrap items-center gap-4">
@@ -140,6 +152,84 @@ export function Contact() {
         </Reveal>
       </div>
     </section>
+  );
+}
+
+function TaskPicker({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  options: readonly string[];
+}) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const listId = useId();
+
+  useEffect(() => {
+    function onDoc(e: MouseEvent) {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, []);
+
+  return (
+    <div ref={rootRef} className="relative flex flex-col gap-1.5">
+      <span className="text-xs text-muted">Задача</span>
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listId}
+        onClick={() => setOpen((v) => !v)}
+        className="flex min-h-[44px] w-full items-center justify-between gap-3 rounded-[10px] border border-border bg-background px-3 py-2.5 text-left text-sm outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/40"
+      >
+        <span className={value ? "text-foreground" : "text-muted"}>
+          {value || "Выберите задачу"}
+        </span>
+        <span
+          className={`font-mono text-accent transition-transform ${open ? "rotate-180" : ""}`}
+          aria-hidden
+        >
+          ↓
+        </span>
+      </button>
+
+      {open && (
+        <ul
+          id={listId}
+          role="listbox"
+          className="absolute top-[calc(100%+6px)] z-20 max-h-60 w-full overflow-auto rounded-[10px] border border-border bg-surface py-1 shadow-[0_16px_40px_rgba(0,0,0,0.45)]"
+        >
+          {options.map((opt) => (
+            <li key={opt} role="option" aria-selected={value === opt}>
+              <button
+                type="button"
+                className={`flex min-h-[44px] w-full items-center px-3 py-2.5 text-left text-sm transition hover:bg-accent-dim hover:text-accent ${
+                  value === opt ? "bg-accent-dim text-accent" : "text-foreground"
+                }`}
+                onClick={() => {
+                  onChange(opt);
+                  setOpen(false);
+                }}
+              >
+                {opt}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
@@ -166,7 +256,7 @@ function Field({
         type={type}
         required={required}
         autoComplete={autoComplete}
-        className="rounded-[10px] border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted/50 focus:border-accent/50 focus:ring-1 focus:ring-accent/40"
+        className="min-h-[44px] rounded-[10px] border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted/50 focus:border-accent/50 focus:ring-1 focus:ring-accent/40"
       />
     </label>
   );
