@@ -1,3 +1,4 @@
+import { createTransport } from "nodemailer";
 import { NextResponse } from "next/server";
 
 type ContactBody = {
@@ -62,6 +63,60 @@ async function notifyTelegram(payload: {
   return { sent: true as const };
 }
 
+async function sendLeadEmail(payload: {
+  name: string;
+  contact: string;
+  task: string;
+  message?: string;
+}) {
+  const host = process.env.SMTP_HOST;
+  const port = Number(process.env.SMTP_PORT || "465");
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  const to = process.env.CONTACT_TO_EMAIL || user;
+
+  if (!host || !user || !pass || !to) {
+    throw new Error("SMTP environment is not configured");
+  }
+
+  const transporter = createTransport({
+    host,
+    port,
+    secure: port === 465,
+    auth: { user, pass },
+  });
+
+  const subject = `Новая заявка с сайта — ${payload.name}`;
+  const textLines = [
+    "Новая заявка с сайта",
+    "",
+    `Имя: ${payload.name}`,
+    `Контакт: ${payload.contact}`,
+    `Задача: ${payload.task}`,
+    payload.message ? `Комментарий: ${payload.message}` : "",
+    `Время: ${new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })} (МСК)`,
+  ].filter(Boolean);
+
+  const htmlLines = [
+    "<h2>Новая заявка с сайта</h2>",
+    `<p><b>Имя:</b> ${escapeHtml(payload.name)}</p>`,
+    `<p><b>Контакт:</b> ${escapeHtml(payload.contact)}</p>`,
+    `<p><b>Задача:</b> ${escapeHtml(payload.task)}</p>`,
+    payload.message
+      ? `<p><b>Комментарий:</b> ${escapeHtml(payload.message)}</p>`
+      : "",
+    `<p><b>Время:</b> ${new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })} (МСК)</p>`,
+  ].filter(Boolean);
+
+  await transporter.sendMail({
+    from: `"Заявки danyushin.ru" <${user}>`,
+    to,
+    subject,
+    text: textLines.join("\n"),
+    html: htmlLines.join("\n"),
+  });
+}
+
 export async function POST(request: Request) {
   let body: ContactBody;
 
@@ -91,6 +146,17 @@ export async function POST(request: Request) {
     at: new Date().toISOString(),
   });
 
+  try {
+    await sendLeadEmail({ name, contact, task, message: message || undefined });
+  } catch (err) {
+    console.error("[contact] smtp send failed", err);
+    return NextResponse.json(
+      { error: "Не удалось отправить заявку. Попробуйте еще раз." },
+      { status: 502 },
+    );
+  }
+
+  // Доп. канал: не блокирует успешную заявку при сбое Telegram.
   try {
     await notifyTelegram({ name, contact, task, message: message || undefined });
   } catch (err) {
