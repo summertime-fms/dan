@@ -74,6 +74,7 @@ async function sendLeadEmail(payload: {
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
   const to = process.env.CONTACT_TO_EMAIL || user;
+  const tlsServername = process.env.SMTP_TLS_SERVERNAME || host;
 
   if (!host || !user || !pass || !to) {
     throw new Error("SMTP environment is not configured");
@@ -84,6 +85,12 @@ async function sendLeadEmail(payload: {
     port,
     secure: port === 465,
     auth: { user, pass },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
+    tls: {
+      servername: tlsServername,
+    },
   });
 
   const subject = `Новая заявка с сайта — ${payload.name}`;
