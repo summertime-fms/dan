@@ -23,6 +23,7 @@ async function notifyTelegram(payload: {
 }) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
+  const baseUrl = process.env.TELEGRAM_API_BASE || "https://api.telegram.org";
 
   if (!token || !chatId) {
     console.warn("[contact] TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID not set");
@@ -43,7 +44,7 @@ async function notifyTelegram(payload: {
     `<b>Время:</b> ${new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })} (МСК)`,
   );
 
-  const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+  const res = await fetch(`${baseUrl}/bot${token}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
