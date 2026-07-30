@@ -16,6 +16,7 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://danyushin.ru"),
   title: {
     default: "Михаил Данюшин — Fractional AI-инженер",
     template: "%s · Михаил Данюшин",
@@ -31,12 +32,32 @@ export const metadata: Metadata = {
     "retainer",
   ],
   authors: [{ name: "Михаил Данюшин" }],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "Михаил Данюшин — Fractional AI-инженер",
     description:
       "Довожу задачи автоматизации, аналитики и AI-интеграций до результата — без штатной единицы в найме.",
+    url: "https://danyushin.ru",
+    siteName: "Михаил Данюшин",
     locale: "ru_RU",
     type: "website",
+    images: [
+      {
+        url: "/og-cover.svg",
+        width: 1200,
+        height: 630,
+        alt: "Михаил Данюшин — Fractional AI-инженер",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Михаил Данюшин — Fractional AI-инженер",
+    description:
+      "Fractional AI-инженер и оркестратор IT-процессов для бизнеса.",
+    images: ["/og-cover.svg"],
   },
   robots: { index: true, follow: true },
 };
