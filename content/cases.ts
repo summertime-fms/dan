@@ -1,5 +1,11 @@
 export type CaseStatus = "published" | "soon";
 
+export type CaseCategory =
+  | "AI-агенты"
+  | "Аналитика и BI"
+  | "Performance & DevOps"
+  | "Наведение порядка в IT";
+
 export type CaseScreenshot = {
   src: string;
   alt: string;
@@ -13,13 +19,24 @@ export type CaseItem = {
   status: CaseStatus;
   title: string;
   starred: boolean;
+  /** Технические бирки стека (под заголовком) */
   tags: string[];
+  /** Категории для фильтра над сеткой */
+  categories: CaseCategory[];
   problem: string;
   solution: string;
   results: { label: string; value: string }[];
-  visual: "browser" | "pipeline" | "etl" | "soon";
+  visual: "browser" | "pipeline" | "etl" | "performance" | "soon";
   screenshots?: CaseScreenshot[];
 };
+
+export const caseCategoryFilters: Array<"Все" | CaseCategory> = [
+  "Все",
+  "AI-агенты",
+  "Аналитика и BI",
+  "Performance & DevOps",
+  "Наведение порядка в IT",
+];
 
 export const cases: CaseItem[] = [
   {
@@ -28,6 +45,7 @@ export const cases: CaseItem[] = [
     title: "РТК — внутренняя ERP/BI-платформа",
     starred: true,
     tags: ["Laravel", "React", "MySQL", "Keycloak SSO", "Chart.js"],
+    categories: ["Аналитика и BI", "Наведение порядка в IT"],
     problem:
       "При портфеле 250+ проектов не было единой системы учёта: воронка, финансы, загрузка сотрудников и отчётность жили в 1С, таблицах и ручных отчётах.",
     solution:
@@ -89,6 +107,7 @@ export const cases: CaseItem[] = [
     title: "hemonc.ru — контент-завод на AI-агентах",
     starred: true,
     tags: ["AI Agents", "Multi-agent QA", "LLM Pipeline"],
+    categories: ["AI-агенты"],
     problem:
       "Пациентский контент для сайта и соцсетей требовал копирайтера и двух SMM — нужно было сохранить медицинскую точность без штатной зависимости от трёх человек.",
     solution:
@@ -106,6 +125,7 @@ export const cases: CaseItem[] = [
     title: "Клиника Ласкова — DWH и Power BI",
     starred: true,
     tags: ["Power BI", "PostgreSQL", "Python", "ETL"],
+    categories: ["Аналитика и BI", "Наведение порядка в IT"],
     problem:
       "Модели были перегружены, регулярный рефреш уходил в таймаут, отчёт — одна громоздкая модель с множеством вкладок. Сотрудникам сложно найти нужный срез.",
     solution:
@@ -123,9 +143,28 @@ export const cases: CaseItem[] = [
     title: "Сквозная аналитика клиники",
     starred: false,
     tags: ["DataLens", "Yandex Cloud", "ETL"],
+    categories: ["Аналитика и BI"],
     problem: "",
     solution: "",
     results: [],
     visual: "soon",
+  },
+  {
+    id: "zapyataya",
+    status: "published",
+    title: "Запятая — ускорение и UX книжного магазина",
+    starred: true,
+    tags: ["WordPress", "WooCommerce", "Core Web Vitals", "Photon CDN"],
+    categories: ["Performance & DevOps", "Наведение порядка в IT"],
+    problem:
+      "Мобильная витрина zapyataya.eu грузилась тяжело: категория ~6 MB / 125 запросов, LCP до 23 секунд. Избранное прыгало, спиннер 1–2 сек, мелкий тап; заявки waitlist и поломка доставки Furgonetka были слепыми зонами в операциях.",
+    solution:
+      "Сократил вес и запросы (thumbnail/srcset, dequeue лишнего JS/CSS, Photon, Critical CSS), починил UX избранного и CTA, вывел ~67 заявок waitlist в админку WooCommerce. Диагностировал сломанные credentials Furgonetka как открытый блокер самовывоза.",
+    results: [
+      { label: "LCP категории", value: "23с → 2.9с" },
+      { label: "Вес страницы", value: "−82%" },
+      { label: "Lab score", value: "61 → 90" },
+    ],
+    visual: "performance",
   },
 ];

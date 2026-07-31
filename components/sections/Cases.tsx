@@ -1,11 +1,38 @@
+"use client";
+
+import { useState } from "react";
 import { Reveal } from "@/components/ui/Reveal";
 import { ScreenshotCarousel } from "@/components/ui/ScreenshotCarousel";
-import { EtlVisual, PipelineVisual } from "@/components/ui/Visuals";
-import { cases } from "@/content/cases";
+import {
+  EtlVisual,
+  PerformanceVisual,
+  PipelineVisual,
+} from "@/components/ui/Visuals";
+import {
+  caseCategoryFilters,
+  cases,
+  type CaseCategory,
+  type CaseItem,
+} from "@/content/cases";
 import { casesAttribution } from "@/content/copy";
-import type { CaseItem } from "@/content/cases";
+
+type Filter = (typeof caseCategoryFilters)[number];
+
+const filterLabels: Record<Filter, string> = {
+  Все: "Все",
+  "AI-агенты": "AI-агенты",
+  "Аналитика и BI": "Аналитика и BI",
+  "Performance & DevOps": "Performance & DevOps",
+  "Наведение порядка в IT": "Наведение порядка",
+};
 
 export function Cases() {
+  const [filter, setFilter] = useState<Filter>("Все");
+
+  const visible = cases.filter((item) =>
+    filter === "Все" ? true : item.categories.includes(filter as CaseCategory),
+  );
+
   return (
     <section id="cases" className="scroll-mt-20 py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -21,8 +48,36 @@ export function Cases() {
           </p>
         </Reveal>
 
-        <div className="mt-10 space-y-6">
-          {cases.map((item, i) => (
+        <div
+          className="mt-8 flex flex-wrap items-center gap-2"
+          role="group"
+          aria-label="Фильтр кейсов по категории"
+        >
+          <span className="mr-1 font-mono text-[11px] uppercase tracking-wider text-muted">
+            Показать:
+          </span>
+          {caseCategoryFilters.map((item) => {
+            const active = filter === item;
+            return (
+              <button
+                key={item}
+                type="button"
+                onClick={() => setFilter(item)}
+                aria-pressed={active}
+                className={`min-h-11 rounded-md border px-3 py-2 font-mono text-[11px] transition-colors duration-200 ${
+                  active
+                    ? "border-accent/50 bg-accent-dim text-accent"
+                    : "border-border bg-surface/60 text-muted hover:border-accent/30 hover:text-foreground"
+                }`}
+              >
+                {filterLabels[item]}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-8 space-y-6">
+          {visible.map((item, i) => (
             <Reveal key={item.id} delay={0.04 * i}>
               {item.status === "soon" ? (
                 <SoonCard />
@@ -46,7 +101,10 @@ export function Cases() {
 
 function CaseCard({ item }: { item: CaseItem }) {
   const hasShots = Boolean(item.screenshots?.length);
-  const hasDiagram = item.visual === "pipeline" || item.visual === "etl";
+  const hasDiagram =
+    item.visual === "pipeline" ||
+    item.visual === "etl" ||
+    item.visual === "performance";
 
   return (
     <article className="overflow-hidden rounded-[12px] border border-border bg-surface transition-colors duration-200 hover:border-accent/25">
@@ -96,7 +154,13 @@ function CaseCard({ item }: { item: CaseItem }) {
 
         {hasDiagram && !hasShots && (
           <div className="border-t border-border bg-surface-raised/30 p-4 sm:p-6">
-            {item.visual === "pipeline" ? <PipelineVisual /> : <EtlVisual />}
+            {item.visual === "pipeline" ? (
+              <PipelineVisual />
+            ) : item.visual === "etl" ? (
+              <EtlVisual />
+            ) : (
+              <PerformanceVisual />
+            )}
           </div>
         )}
       </div>

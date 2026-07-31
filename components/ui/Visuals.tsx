@@ -205,6 +205,55 @@ export function EtlVisual() {
   );
 }
 
+export function PerformanceVisual() {
+  const rows = [
+    { page: "Категория", before: "61", after: "90", metric: "LCP 23с → 2.9с" },
+    { page: "Карточка", before: "55", after: "85", metric: "Вес −86%" },
+    { page: "Главная", before: "60", after: "64–69", metric: "Вес −62%" },
+  ] as const;
+
+  return (
+    <div className="rounded-[12px] border border-border bg-surface-raised/50 p-4 sm:p-6">
+      <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent">
+            Lab · Lighthouse Mobile
+          </p>
+          <p className="mt-1 text-sm text-muted">
+            zapyataya.eu · baseline → post-deploy
+          </p>
+        </div>
+        <p className="font-mono text-[11px] text-muted">30.07.2026</p>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        {rows.map((row) => (
+          <div
+            key={row.page}
+            className="rounded-[10px] border border-border bg-background/60 p-3"
+          >
+            <p className="font-mono text-[10px] uppercase tracking-wider text-muted">
+              {row.page}
+            </p>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="font-mono text-lg text-muted/70 line-through decoration-white/20">
+                {row.before}
+              </span>
+              <span className="text-muted/50">→</span>
+              <span className="font-mono text-2xl font-semibold text-accent">
+                {row.after}
+              </span>
+            </div>
+            <p className="mt-2 text-xs leading-snug text-foreground/80">
+              {row.metric}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function PortraitPlaceholder() {
   return (
     <div
