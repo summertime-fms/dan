@@ -207,9 +207,9 @@ export function EtlVisual() {
 
 export function PerformanceVisual() {
   const rows = [
-    { page: "Категория", before: "61", after: "90", metric: "LCP 23с → 2.9с" },
-    { page: "Карточка", before: "55", after: "85", metric: "Вес −86%" },
-    { page: "Главная", before: "60", after: "64–69", metric: "Вес −62%" },
+    { page: "Категория", before: "61", after: "90+", metric: "Каталог: 23с → ~3с" },
+    { page: "Карточка", before: "55", after: "85", metric: "Вес страницы −86%" },
+    { page: "Главная", before: "60", after: "66", metric: "Вес страницы −62%" },
   ] as const;
 
   return (
