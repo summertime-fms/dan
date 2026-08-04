@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/Badge";
 import { LinkButton } from "@/components/ui/Button";
-import { PortraitPlaceholder } from "@/components/ui/Visuals";
+import { HeroOrchestration } from "@/components/ui/HeroOrchestration";
 import { Reveal } from "@/components/ui/Reveal";
 import { hero, site } from "@/content/copy";
 
@@ -56,7 +56,7 @@ export function Hero() {
         </Reveal>
 
         <Reveal delay={0.12} className="mx-auto w-full max-w-sm lg:max-w-none">
-          <PortraitPlaceholder />
+          <HeroOrchestration />
         </Reveal>
       </div>
     </section>

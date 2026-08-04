@@ -254,16 +254,3 @@ export function PerformanceVisual() {
   );
 }
 
-export function PortraitPlaceholder() {
-  return (
-    <div
-      className="relative aspect-[4/5] w-full overflow-hidden rounded-[12px] border border-border"
-      aria-label="Портрет эксперта — скоро"
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-surface to-surface-raised" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(0,229,255,0.15),transparent_55%)]" />
-      <div className="absolute inset-x-[22%] top-[18%] bottom-[28%] rounded-full bg-foreground/5 blur-sm" />
-      <div className="absolute inset-x-[18%] bottom-[8%] h-[35%] rounded-t-[40%] bg-foreground/8" />
-    </div>
-  );
-}
