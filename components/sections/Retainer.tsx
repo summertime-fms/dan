@@ -33,17 +33,11 @@ export function Retainer() {
               ))}
             </ul>
 
-            <p className="mt-8 font-mono text-base text-accent sm:text-lg">
-              {retainer.priceAnchor}
-            </p>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
-              {retainer.comparison}
-            </p>
-            <p className="mt-2 text-sm text-muted">{retainer.note}</p>
+            <p className="mt-8 text-sm text-muted">{retainer.note}</p>
 
             <div className="mt-6">
               <LinkButton href="#contact" size="lg">
-                Свяжитесь с нами
+                Свяжитесь со мной
               </LinkButton>
             </div>
           </div>
