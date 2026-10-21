@@ -21,14 +21,22 @@
 - Доп. канал: Telegram (не должен ломать успешную отправку формы).
 - При поломке SMTP — возвращать ошибку клиенту (не фейковый success).
 
-## 4) Прод-архитектура
+## 4) GitHub Pages (статический превью)
+
+- Workflow: `.github/workflows/deploy-pages.yml` (push в `main`).
+- URL: `https://summertime-fms.github.io/dan/` (`NEXT_PUBLIC_BASE_PATH=/dan`).
+- Сборка: `output: export` при `GITHUB_PAGES=true`; папка `app/api` удаляется в CI (API на Pages нет).
+- Форма на Pages шлёт заявки на `https://danyushin.ru/api/contact` (нужен CORS + деплой API на VPS).
+- В настройках репозитория: **Settings → Pages → Build and deployment → GitHub Actions**.
+
+## 5) Прод-архитектура
 
 - App server: `79.174.90.215` (PM2 + Nginx + Let's Encrypt).
 - Proxy server: `195.135.253.101` (туннели для SMTP/TG при блокировках).
 - Deploy script: `/var/www/dan/deploy.sh`.
 - PM2 app: `dan`.
 
-## 5) Проверки перед деплоем
+## 6) Проверки перед деплоем
 
 Локально:
 
@@ -49,7 +57,7 @@ curl -I https://danyushin.ru
 - Отправить тестовую заявку через `POST /api/contact`.
 - Убедиться, что письмо пришло и (если включено) Telegram-уведомление доставлено.
 
-## 6) Безопасность
+## 7) Безопасность
 
 - Не хранить секреты в git.
 - Секреты только в env на сервере/PM2.

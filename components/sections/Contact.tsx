@@ -7,6 +7,9 @@ import { contact, site } from "@/content/copy";
 
 type Status = "idle" | "loading" | "ok" | "error";
 
+const contactApiUrl =
+  process.env.NEXT_PUBLIC_CONTACT_API_URL?.trim() || "/api/contact";
+
 export function Contact() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
@@ -35,7 +38,7 @@ export function Contact() {
     }
 
     try {
-      const res = await fetch("/api/contact", {
+      const res = await fetch(contactApiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

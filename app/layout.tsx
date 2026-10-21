@@ -16,8 +16,10 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://danyushin.ru";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://danyushin.ru"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Михаил Данюшин — Fractional AI-инженер",
     template: "%s · Михаил Данюшин",
@@ -40,7 +42,7 @@ export const metadata: Metadata = {
     title: "Михаил Данюшин — Fractional AI-инженер",
     description:
       "Довожу задачи автоматизации, аналитики и AI-интеграций до результата — без штатной единицы в найме.",
-    url: "https://danyushin.ru",
+    url: siteUrl,
     siteName: "Михаил Данюшин",
     locale: "ru_RU",
     type: "website",

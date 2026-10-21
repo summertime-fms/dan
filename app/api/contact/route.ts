@@ -8,6 +8,35 @@ type ContactBody = {
   message?: string;
 };
 
+const defaultCorsOrigins = ["https://summertime-fms.github.io"];
+
+function allowedCorsOrigins() {
+  const fromEnv = process.env.CONTACT_CORS_ORIGINS?.split(",")
+    .map((o) => o.trim())
+    .filter(Boolean);
+  return fromEnv?.length ? fromEnv : defaultCorsOrigins;
+}
+
+function corsHeaders(origin: string | null): Record<string, string> {
+  if (!origin) return {};
+  const allowed = allowedCorsOrigins();
+  if (!allowed.includes(origin)) return {};
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    Vary: "Origin",
+  };
+}
+
+export async function OPTIONS(request: Request) {
+  const headers = corsHeaders(request.headers.get("origin"));
+  if (!headers["Access-Control-Allow-Origin"]) {
+    return new NextResponse(null, { status: 403 });
+  }
+  return new NextResponse(null, { status: 204, headers });
+}
+
 function escapeHtml(text: string) {
   return text
     .replaceAll("&", "&amp;")
@@ -126,12 +155,18 @@ async function sendLeadEmail(payload: {
 }
 
 export async function POST(request: Request) {
+  const origin = request.headers.get("origin");
+  const cors = corsHeaders(origin);
+
   let body: ContactBody;
 
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Некорректный JSON" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Некорректный JSON" },
+      { status: 400, headers: cors },
+    );
   }
 
   const name = body.name?.trim();
@@ -142,7 +177,7 @@ export async function POST(request: Request) {
   if (!name || !contact || !task) {
     return NextResponse.json(
       { error: "Заполните все обязательные поля" },
-      { status: 400 },
+      { status: 400, headers: cors },
     );
   }
 
@@ -160,7 +195,7 @@ export async function POST(request: Request) {
     console.error("[contact] smtp send failed", err);
     return NextResponse.json(
       { error: "Не удалось отправить заявку. Попробуйте еще раз." },
-      { status: 502 },
+      { status: 502, headers: cors },
     );
   }
 
@@ -171,5 +206,5 @@ export async function POST(request: Request) {
     console.error("[contact] telegram notify failed", err);
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true }, { headers: cors });
 }
