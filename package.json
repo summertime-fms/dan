@@ -1,29 +1,15 @@
 {
-  "name": "danyushin",
-  "version": "0.1.0",
+  "name": "danyushin-portfolio",
   "private": true,
+  "version": "1.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "framer-motion": "^12.43.0",
-    "next": "16.2.12",
-    "nodemailer": "^9.0.3",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/nodemailer": "^8.0.1",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.12",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5.9.2",
+    "vite": "^7.1.5"
   }
 }
