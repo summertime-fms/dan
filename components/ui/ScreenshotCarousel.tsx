@@ -10,6 +10,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import type { CaseScreenshot } from "@/content/cases";
+import { publicUrl } from "@/lib/public-url";
 
 function tallestScreenshot(screenshots: CaseScreenshot[]) {
   return screenshots.reduce((best, shot) =>
@@ -61,7 +62,7 @@ export function ScreenshotCarousel({
           {screenshots.map((shot, i) => (
             <Image
               key={shot.src}
-              src={shot.src}
+              src={publicUrl(shot.src)}
               alt={shot.alt}
               width={shot.width}
               height={shot.height}
@@ -259,7 +260,7 @@ function Lightbox({
         className="relative mx-auto flex min-h-0 w-full flex-1 touch-pan-y items-center justify-center px-2 pb-4 select-none"
       >
         <Image
-          src={current.src}
+          src={publicUrl(current.src)}
           alt={current.alt}
           width={current.width}
           height={current.height}
