@@ -79,11 +79,12 @@ function renderCatalog() {
   const visible =
     active === "all" ? projects : projects.filter((p) => p.category === active);
 
+  catalog.classList.add("is-updating");
   catalog.innerHTML = visible
     .map((project, index) => {
       const n = String(index + 1).padStart(2, "0");
       const withCover = Boolean(project.featured || project.cover);
-      return `<button class="project${withCover ? " featured" : ""}" type="button" data-id="${project.id}">
+      return `<button class="project project-enter${withCover ? " featured" : ""}" type="button" data-id="${project.id}" style="animation-delay:${Math.min(index * 0.045, 0.4)}s">
         <span class="project-num">${n}</span>
         <span>
           <h3 class="project-title">${project.title}</h3>
@@ -97,6 +98,7 @@ function renderCatalog() {
       </button>`;
     })
     .join("");
+  requestAnimationFrame(() => catalog.classList.remove("is-updating"));
 }
 
 function renderFilters() {
@@ -186,5 +188,32 @@ skillsGrid.innerHTML = skills
   )
   .join("");
 
+function initMotion() {
+  const header = document.querySelector<HTMLElement>(".site-header");
+  const onScroll = () => header?.classList.toggle("is-scrolled", window.scrollY > 12);
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion) {
+    document.querySelectorAll(".reveal").forEach((el) => el.classList.add("is-visible"));
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
+  );
+  document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+}
+
 renderFilters();
 renderCatalog();
+initMotion();

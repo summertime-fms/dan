@@ -20,6 +20,7 @@
   --font-serif: "Onest", system-ui, sans-serif;
   --font-mono: "Onest", system-ui, sans-serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 *,
@@ -44,8 +45,56 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-body::before {
-  display: none;
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes catalog-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes glow-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(2%, 1%, 0) scale(1.03);
+  }
 }
 
 img {
@@ -94,6 +143,14 @@ input {
   backdrop-filter: blur(16px);
   background: rgba(246, 244, 240, 0.88);
   border-bottom: 1px solid var(--line);
+  transition:
+    box-shadow 0.35s var(--ease),
+    background 0.35s var(--ease);
+}
+
+.site-header.is-scrolled {
+  background: rgba(246, 244, 240, 0.96);
+  box-shadow: 0 1px 0 var(--line), 0 10px 32px rgba(28, 27, 25, 0.05);
 }
 
 .header-inner {
@@ -137,6 +194,7 @@ input {
   text-decoration: none;
   color: var(--muted);
   font-size: 0.92rem;
+  transition: color 0.2s var(--ease);
 }
 
 .nav a:hover,
@@ -160,6 +218,60 @@ input {
   position: relative;
   z-index: 1;
   padding: 88px 0 72px;
+  overflow: clip;
+}
+
+.hero-glow {
+  position: absolute;
+  inset: -30% -10% auto;
+  height: min(520px, 70vh);
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 12% 0%, rgba(28, 27, 25, 0.055), transparent 68%),
+    radial-gradient(ellipse 45% 40% at 88% 8%, rgba(28, 27, 25, 0.035), transparent 70%);
+  animation: glow-drift 18s ease-in-out infinite;
+}
+
+.hero .wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.hero .wrap > * {
+  opacity: 0;
+  animation: fade-up 0.8s var(--ease-out) forwards;
+}
+
+.hero .wrap > *:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.hero .wrap > *:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.hero .wrap > *:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.hero .wrap > *:nth-child(4) {
+  animation-delay: 0.28s;
+}
+.hero .wrap > *:nth-child(5) {
+  animation-delay: 0.36s;
+}
+.hero .wrap > *:nth-child(6) {
+  animation-delay: 0.44s;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.7s var(--ease-out),
+    transform 0.7s var(--ease-out);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .kicker {
@@ -212,6 +324,16 @@ input {
   border-radius: 999px;
   padding: 7px 12px;
   background: var(--bg-elev);
+  transition:
+    transform 0.25s var(--ease),
+    border-color 0.25s var(--ease),
+    box-shadow 0.25s var(--ease);
+}
+
+.chip:hover {
+  transform: translateY(-1px);
+  border-color: var(--line-strong);
+  box-shadow: 0 6px 16px rgba(28, 27, 25, 0.06);
 }
 
 .hero-actions {
@@ -296,6 +418,15 @@ section {
   border-radius: 999px;
   padding: 8px 14px;
   cursor: pointer;
+  transition:
+    color 0.22s var(--ease),
+    background 0.22s var(--ease),
+    border-color 0.22s var(--ease),
+    transform 0.22s var(--ease);
+}
+
+.filter:active {
+  transform: scale(0.97);
 }
 
 .filter:hover,
@@ -308,6 +439,10 @@ section {
 .catalog {
   display: grid;
   gap: 12px;
+}
+
+.catalog.is-updating {
+  pointer-events: none;
 }
 
 .project {
@@ -323,12 +458,23 @@ section {
   border-radius: 0;
   background: transparent;
   cursor: pointer;
-  transition: opacity 0.2s var(--ease);
+  transition:
+    background 0.28s var(--ease),
+    padding 0.28s var(--ease),
+    border-color 0.28s var(--ease);
+}
+
+.project-enter {
+  animation: catalog-enter 0.5s var(--ease-out) backwards;
 }
 
 .project:hover,
 .project:focus-visible {
-  opacity: 0.64;
+  background: rgba(255, 255, 255, 0.72);
+  padding-inline: 14px;
+  margin-inline: -14px;
+  border-radius: 12px;
+  border-bottom-color: transparent;
 }
 
 .project-num {
@@ -391,6 +537,15 @@ section {
   border: 1px solid var(--line);
   background: var(--bg-elev);
   justify-self: stretch;
+  transition:
+    box-shadow 0.35s var(--ease),
+    transform 0.35s var(--ease);
+}
+
+.project:hover .cover,
+.project:focus-visible .cover {
+  box-shadow: 0 12px 28px rgba(28, 27, 25, 0.1);
+  transform: translateY(-2px);
 }
 
 .cover img {
@@ -398,6 +553,12 @@ section {
   height: 100%;
   object-fit: cover;
   object-position: top;
+  transition: transform 0.55s var(--ease-out);
+}
+
+.project:hover .cover img,
+.project:focus-visible .cover img {
+  transform: scale(1.04);
 }
 
 .cover-art {
@@ -411,6 +572,12 @@ section {
 .cover-art svg {
   width: 88%;
   height: 88%;
+  transition: transform 0.45s var(--ease-out);
+}
+
+.project:hover .cover-art svg,
+.project:focus-visible .cover-art svg {
+  transform: scale(1.04);
 }
 
 .about-grid,
@@ -479,6 +646,16 @@ section {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--bg-elev);
+  transition:
+    transform 0.28s var(--ease),
+    box-shadow 0.28s var(--ease),
+    border-color 0.28s var(--ease);
+}
+
+.skill-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-strong);
+  box-shadow: 0 10px 24px rgba(28, 27, 25, 0.06);
 }
 
 .skill-card h3 {
@@ -510,10 +687,16 @@ section {
   border-radius: var(--radius);
   text-decoration: none;
   background: var(--bg-elev);
+  transition:
+    transform 0.28s var(--ease),
+    border-color 0.28s var(--ease),
+    box-shadow 0.28s var(--ease);
 }
 
 .contact-card:hover {
   border-color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(28, 27, 25, 0.06);
 }
 
 .contact-card span {
@@ -561,9 +744,30 @@ dialog {
   box-shadow: 0 16px 48px rgba(28, 27, 25, 0.12);
 }
 
+dialog[open] {
+  animation: dialog-in 0.38s var(--ease-out);
+}
+
+dialog[open]::backdrop {
+  animation: backdrop-in 0.32s ease;
+}
+
 dialog::backdrop {
   background: rgba(28, 27, 25, 0.28);
   backdrop-filter: blur(6px);
+}
+
+.close {
+  transition:
+    transform 0.2s var(--ease),
+    border-color 0.2s var(--ease),
+    background 0.2s var(--ease);
+}
+
+.close:hover {
+  transform: rotate(90deg);
+  border-color: var(--line-strong);
+  background: var(--bg-soft);
 }
 
 .dialog-bar {
@@ -757,8 +961,30 @@ dialog::backdrop {
     scroll-behavior: auto;
   }
 
+  .hero-glow,
+  .hero .wrap > *,
+  .project-enter,
+  dialog[open],
+  dialog[open]::backdrop {
+    animation: none !important;
+  }
+
+  .hero .wrap > *,
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
   .project,
-  .btn {
+  .btn,
+  .chip,
+  .filter,
+  .cover,
+  .cover img,
+  .skill-card,
+  .contact-card,
+  .close,
+  .site-header {
     transition: none;
   }
 }
