@@ -20,6 +20,12 @@ const closeBtn = dialog.querySelector<HTMLButtonElement>(".close")!;
 const filters: Array<"all" | Category> = ["all", "ai", "data", "platform", "web"];
 let active: "all" | Category = "all";
 
+function assetUrl(path: string): string {
+  const base = import.meta.env.BASE_URL;
+  const normalized = path.replace(/^\//, "");
+  return `${base}${normalized}`;
+}
+
 function coverSvg(kind: Project["coverKind"]): string {
   const common =
     'fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"';
@@ -64,7 +70,7 @@ function coverSvg(kind: Project["coverKind"]): string {
 
 function cover(project: Project): string {
   if (project.coverKind === "image" && project.cover) {
-    return `<div class="cover"><img src="${project.cover}" alt="" /></div>`;
+    return `<div class="cover"><img src="${assetUrl(project.cover)}" alt="" /></div>`;
   }
   return `<div class="cover cover-art tag-${project.category}">${coverSvg(project.coverKind)}</div>`;
 }
@@ -110,7 +116,7 @@ function openProject(project: Project) {
     ? `<div class="gallery">${project.images
         .map(
           (img) =>
-            `<figure><img src="${img.src}" alt="${img.alt}" />${
+            `<figure><img src="${assetUrl(img.src)}" alt="${img.alt}" />${
               img.label ? `<figcaption>${img.label}</figcaption>` : ""
             }</figure>`,
         )
