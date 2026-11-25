@@ -52,6 +52,28 @@ function coverSvg(kind: Project["coverKind"]): string {
       <path d="M148 60h28" />
     </svg>`;
   }
+  if (kind === "cards") {
+    return `<svg viewBox="0 0 240 120" ${common} aria-hidden="true">
+      <rect x="20" y="30" width="56" height="60" rx="6" />
+      <path d="M32 46h32M32 58h24M32 70h28" />
+      <path d="M86 60h24" />
+      <rect x="120" y="22" width="44" height="34" rx="5" />
+      <rect x="120" y="64" width="44" height="34" rx="5" />
+      <rect x="176" y="22" width="44" height="34" rx="5" />
+      <rect x="176" y="64" width="44" height="34" rx="5" />
+    </svg>`;
+  }
+  if (kind === "rag") {
+    return `<svg viewBox="0 0 240 120" ${common} aria-hidden="true">
+      <rect x="18" y="24" width="40" height="52" rx="5" />
+      <rect x="28" y="34" width="40" height="52" rx="5" />
+      <path d="M38 50h20M38 62h16" />
+      <circle cx="112" cy="56" r="16" />
+      <path d="M124 68l12 12M68 56h28" />
+      <rect x="150" y="34" width="72" height="44" rx="10" />
+      <path d="M162 50h48M162 62h30" />
+    </svg>`;
+  }
   if (kind === "ask") {
     return `<svg viewBox="0 0 240 120" ${common} aria-hidden="true">
       <rect x="24" y="28" width="110" height="64" rx="10" />
@@ -87,6 +109,7 @@ function renderCatalog() {
       return `<button class="project project-enter${withCover ? " featured" : ""}" type="button" data-id="${project.id}" style="animation-delay:${Math.min(index * 0.045, 0.4)}s">
         <span class="project-num">${n}</span>
         <span>
+          ${project.badge ? `<span class="badge-study">${project.badge}</span>` : ""}
           <h3 class="project-title">${project.title}</h3>
           <p class="project-summary">${project.summary}</p>
         </span>
@@ -131,6 +154,7 @@ function openProject(project: Project) {
     : "";
 
   dialogBody.innerHTML = `
+    ${project.badge ? `<span class="badge-study">${project.badge}</span>` : ""}
     <h2 id="dialog-title">${project.title}</h2>
     <p class="dialog-meta">${project.summary}</p>
     <div class="visual">${gallery}</div>
