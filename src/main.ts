@@ -170,6 +170,9 @@ function openProject(project: Project) {
     <p class="stack">${project.stack.map((s) => `<span class="chip">${s}</span>`).join("")}</p>
     ${links}
   `;
+  const gutter = window.innerWidth - document.documentElement.clientWidth;
+  document.documentElement.style.paddingRight = gutter ? `${gutter}px` : "";
+  document.documentElement.classList.add("modal-open");
   dialog.showModal();
 }
 
@@ -188,9 +191,20 @@ catalog.addEventListener("click", (event) => {
   if (project) openProject(project);
 });
 
-closeBtn.addEventListener("click", () => dialog.close());
+function unlockScroll() {
+  document.documentElement.classList.remove("modal-open");
+  document.documentElement.style.paddingRight = "";
+}
+
+function closeDialog() {
+  dialog.close();
+  unlockScroll();
+}
+
+closeBtn.addEventListener("click", closeDialog);
+dialog.addEventListener("close", unlockScroll);
 dialog.addEventListener("click", (event) => {
-  if (event.target === dialog) dialog.close();
+  if (event.target === dialog) closeDialog();
 });
 
 timeline.innerHTML = career

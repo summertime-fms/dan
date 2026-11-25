@@ -460,7 +460,7 @@ section {
   cursor: pointer;
   transition:
     background 0.28s var(--ease),
-    padding 0.28s var(--ease),
+    box-shadow 0.28s var(--ease),
     border-color 0.28s var(--ease);
 }
 
@@ -470,9 +470,9 @@ section {
 
 .project:hover,
 .project:focus-visible {
-  background: rgba(255, 255, 255, 0.72);
-  padding-inline: 14px;
-  margin-inline: -14px;
+  --hl: rgba(255, 255, 255, 0.72);
+  background: var(--hl);
+  box-shadow: -14px 0 0 var(--hl), 14px 0 0 var(--hl);
   border-radius: 12px;
   border-bottom-color: transparent;
 }
@@ -551,15 +551,6 @@ section {
   border: 1px solid var(--line);
   background: var(--bg-elev);
   justify-self: stretch;
-  transition:
-    box-shadow 0.35s var(--ease),
-    transform 0.35s var(--ease);
-}
-
-.project:hover .cover,
-.project:focus-visible .cover {
-  box-shadow: 0 12px 28px rgba(28, 27, 25, 0.1);
-  transform: translateY(-2px);
 }
 
 .cover img {
@@ -567,12 +558,6 @@ section {
   height: 100%;
   object-fit: cover;
   object-position: top;
-  transition: transform 0.55s var(--ease-out);
-}
-
-.project:hover .cover img,
-.project:focus-visible .cover img {
-  transform: scale(1.04);
 }
 
 .cover-art {
@@ -586,12 +571,6 @@ section {
 .cover-art svg {
   width: 88%;
   height: 88%;
-  transition: transform 0.45s var(--ease-out);
-}
-
-.project:hover .cover-art svg,
-.project:focus-visible .cover-art svg {
-  transform: scale(1.04);
 }
 
 .about-grid,
@@ -1001,4 +980,8 @@ dialog::backdrop {
   .site-header {
     transition: none;
   }
+}
+
+html.modal-open {
+  overflow: hidden;
 }
