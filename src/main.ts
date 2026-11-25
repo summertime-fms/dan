@@ -7,6 +7,7 @@ import {
   type Category,
   type Project,
 } from "./data";
+import { mockup } from "./mockups";
 
 const catalog = document.querySelector<HTMLDivElement>("#catalog")!;
 const filtersEl = document.querySelector<HTMLDivElement>(".filters")!;
@@ -91,6 +92,9 @@ function coverSvg(kind: Project["coverKind"]): string {
 }
 
 function cover(project: Project): string {
+  if (project.mock) {
+    return `<div class="cover cover-mock">${mockup(project.mock)}</div>`;
+  }
   if (project.coverKind === "image" && project.cover) {
     return `<div class="cover"><img src="${assetUrl(project.cover)}" alt="" /></div>`;
   }
@@ -105,7 +109,7 @@ function renderCatalog() {
   catalog.innerHTML = visible
     .map((project, index) => {
       const n = String(index + 1).padStart(2, "0");
-      const withCover = Boolean(project.featured || project.cover);
+      const withCover = Boolean(project.featured || project.cover || project.mock);
       return `<button class="project project-enter${withCover ? " featured" : ""}" type="button" data-id="${project.id}" style="animation-delay:${Math.min(index * 0.045, 0.4)}s">
         <span class="project-num">${n}</span>
         <span>
@@ -146,7 +150,9 @@ function openProject(project: Project) {
             }</figure>`,
         )
         .join("")}</div>`
-    : cover(project);
+    : project.mock
+      ? `<figure class="mock-figure">${mockup(project.mock)}</figure>`
+      : cover(project);
   const links = project.links.length
     ? `<p class="links">${project.links
         .map((l) => `<a href="${l.href}" target="_blank" rel="noreferrer">${l.label}</a>`)

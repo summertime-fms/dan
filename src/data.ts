@@ -1,3 +1,5 @@
+import type { MockKind } from "./mockups";
+
 export type Category = "ai" | "data" | "platform" | "web";
 
 export type ProjectImage = {
@@ -24,6 +26,7 @@ export type Project = {
   coverKind: "pipeline" | "etl" | "agent" | "ask" | "cards" | "rag" | "image";
   images?: ProjectImage[];
   badge?: string;
+  mock?: MockKind;
 };
 
 const PRACTICUM_BADGE = "Учебный проект в Я Практикум";
@@ -115,6 +118,7 @@ export const projects: Project[] = [
     role: "AI-инженер",
     category: "ai",
     featured: true,
+    mock: "content",
     coverKind: "pipeline",
     summary:
       "Система готовит статьи и посты по правилам клиники и публикует их на сайте и в соцсетях.",
@@ -138,6 +142,7 @@ export const projects: Project[] = [
     role: "Разработчик",
     category: "data",
     featured: true,
+    mock: "dwh",
     coverKind: "etl",
     summary:
       "Каждую ночь данные из рекламы, звонков и CRM собираются в одной базе, и утром отчёты открываются без сбоев.",
@@ -160,6 +165,7 @@ export const projects: Project[] = [
     year: "2026",
     role: "AI-инженер",
     category: "ai",
+    mock: "leads",
     coverKind: "agent",
     summary:
       "Каждый день программа разбирает новые заявки в CRM: простые по правилам, сложные с помощью AI.",
@@ -191,6 +197,7 @@ export const projects: Project[] = [
     year: "2026",
     role: "AI-инженер",
     category: "ai",
+    mock: "ask",
     coverKind: "ask",
     summary:
       "Маркетолог задаёт вопрос к отчёту обычными словами и сразу получает цифру, не дожидаясь аналитика.",
@@ -213,6 +220,7 @@ export const projects: Project[] = [
     year: "2026",
     role: "AI-инженер",
     category: "ai",
+    mock: "cards",
     coverKind: "cards",
     badge: PRACTICUM_BADGE,
     summary:
@@ -236,6 +244,7 @@ export const projects: Project[] = [
     year: "2026",
     role: "AI-инженер",
     category: "ai",
+    mock: "rag",
     coverKind: "rag",
     badge: PRACTICUM_BADGE,
     summary:
